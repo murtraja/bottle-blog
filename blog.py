@@ -2,9 +2,18 @@ from bottle import route, get, post, template, request
 import bottle
 from pymongo import MongoClient
 DBNAME = 'TE3146db'
+USERNAME = 'TE3146'
+PASSWORD = 'TE3146'
+HOSTNAME = \
+'localhost'
+# '192.168.4.91'
+PORT = '27017'
+
 redirect_message = ''
 choose_new_username=''
-connection_string='mongodb://TE3146:TE3146@192.168.4.91:27017/TE3146db'
+connection_string= \
+'mongodb://'+USERNAME+':'+PASSWORD+'@'+HOSTNAME+':'+PORT+'/'+DBNAME
+# 'mongodb://TE3146:TE3146@192.168.4.91:27017/TE3146db'
 # mongodb://[username:password@]host1[:port1]
 
 @route('/')
@@ -64,9 +73,31 @@ def signin_post():
     return bottle.redirect('/signin')
 
 @get('/blog')
-def blog():
+def blog_get():
+    connection = MongoClient(connection_string)
+    col = connection[DBNAME].blog
+    blogs = col.find()
     
-    
+
+    global redirect_message
+    redirected = redirect_message
+    redirect_message = ''
+
+    return template('blog_template', blogs= blogs, redirected = redirected)
+
+@post('/blog')
+def blog_post():
+    blog_title = request.forms.get('title')
+    blog_content = request.forms.get("content")
+
+    connection = MongoClient(connection_string)
+    col = connection[DBNAME].blog
+
+    col.insert({'title':blog_title, 'content':blog_content})
+
+    global redirect_message
+    redirect_message = 'blog '+blog_title+' added!'
+    return bottle.redirect('/blog')   
 
 
 

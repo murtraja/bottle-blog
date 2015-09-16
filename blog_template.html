@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The blog!</title>
+</head>
+<body>
+<h1>{{redirected}}</h1>
+<hr>
+<ol>
+% for blog in blogs:
+<li><h2>{{blog['title']}}</h2></li>
+<p>{{blog['content']}}</p>
+<hr>
+<br>
+%end
+</ol>
+<hr>
+<h1> Post new blog </h1>
+<form action = '/blog' method ='post' id = 'new_blog_form'>
+
+Title:
+<input type = 'text' name = 'title'/><br>
+Content:
+<textarea name = 'content' form = 'new_blog_form'/></textarea><br>
+<input type = 'submit' value = 'post new blog'/>
+</form>
+</body>
+</html>
