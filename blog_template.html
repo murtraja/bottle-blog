@@ -9,6 +9,9 @@
 <ol>
 % for blog in blogs:
 <li><h2>{{blog['title']}}</h2></li>
+% if blog.get('image'):
+<img src = "data:image;base64,{{blog['image']}}" alt = 'no image'/>
+% end
 <p>{{blog['content']}}</p>
 <hr>
 <br>
@@ -16,12 +19,13 @@
 </ol>
 <hr>
 <h1> Post new blog </h1>
-<form action = '/blog' method ='post' id = 'new_blog_form'>
+<form action = '/blog' method ='post' id = 'new_blog_form' enctype="multipart/form-data">
 
 Title:
 <input type = 'text' name = 'title'/><br>
 Content:
 <textarea name = 'content' form = 'new_blog_form'/></textarea><br>
+<input type = 'file' name = 'image_file' accept = 'image/*'/><br>
 <input type = 'submit' value = 'post new blog'/>
 </form>
 </body>

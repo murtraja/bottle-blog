@@ -1,5 +1,5 @@
 from bottle import route, get, post, template, request
-import bottle
+import bottle, os
 from pymongo import MongoClient
 DBNAME = 'TE3146db'
 USERNAME = 'TE3146'
@@ -89,11 +89,25 @@ def blog_get():
 def blog_post():
     blog_title = request.forms.get('title')
     blog_content = request.forms.get("content")
+    file_post = request.files.get('image_file')
+    blogmap = {'title':blog_title, 'content':blog_content}
+    print "file_post:", file_post
+    if file_post:
+        fname,ext = os.path.splitext(file_post.filename)
+        fobj = file_post.file
+        print 'fname:',fname,"ext:",ext
+        print 'fileobject:',fobj
+        # print 'file contents:'
+        fcontents = fobj.read()
+        # print fcontents
+        print 'totalbytes:',len(fcontents)
+        fenc = fcontents.encode('base64')
+        blogmap.update({'image':fenc})
 
     connection = MongoClient(connection_string)
     col = connection[DBNAME].blog
 
-    col.insert({'title':blog_title, 'content':blog_content})
+    col.insert_one(blogmap)
 
     global redirect_message
     redirect_message = 'blog '+blog_title+' added!'
